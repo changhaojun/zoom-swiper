@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>zooming</title>
-    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/swiper.min.css">
     <style>
+        /* zoom */
         .enlarged {
             position: absolute;
             top: 0;
             left: 0;
             z-index: 999;
-            width: calc(100% - 10px);
+            width: 100%;
             height: 100%; 
-            padding: 0 5px;
             background: rgba(0, 0, 0, 1);
             display: flex;
             align-items: center;
@@ -23,11 +24,32 @@
         .enlarged>img {
             width: 100%;
         }
+        .enlarged>.swiper-wrapper {
+            align-items: center;
+        }
+
+        /* swiper */
+        .swiper-container {
+            
+        }
+        .swiper-slide {
+            height: 200px;
+            overflow: hidden;
+            text-align: center;
+            background: #eeeeee;
+        }
+        .swiper-button-next, .swiper-button-prev {
+            width: 17px;
+            height: 34px;
+            margin-top: -17px;
+            background-size: auto;
+        }
     </style>
 </head>
 <body>
     <div style="padding: 10px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
+            <!-- zoom -->
             <div style="width: 48%; margin-right: 20px;">
                 <span class="img-container">
                     <img style="width: 100%;" src="explo.png" alt="">
@@ -45,30 +67,62 @@
                 <source src="./video.mp4.mp4" />
             </video>
         </div>
+        <!-- swiper -->
+        <div id="multiple" class="swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <img class="multiple" style="width: 100%;" src="slide_1.png" alt="">
+                </div>
+                <div class="swiper-slide">Slide 2</div>
+                <div class="swiper-slide">Slide 3</div>
+            </div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
         <div style="height: 1000px;"></div>
     </div>
 
+    <script src="js/swiper.min.js"></script>
     <script>
-        zooming();
-        function zooming() {
-            const imgContainer = [...document.querySelectorAll('.img-container')];
-            const body = document.querySelector('body');
-            const screenHeight = window.screen.height;
-            const clientHeight = document.body.clientHeight;
-            for(let container of imgContainer) {
-                container.onclick = function() {
-                    if(this.classList.contains('enlarged')) {
-                        this.classList.remove('enlarged');
-                        body.style.height = clientHeight + 'px';
-                        body.style.overflow = 'auto';
-                    }else {
-                        this.classList.add('enlarged');
-                        body.style.height = screenHeight + 'px';
-                        body.style.overflow = 'hidden'
+        
+        (function() {
+            let App = {
+                init() {
+                    this.body = document.querySelector('body');
+                    this.screenHeight = window.screen.height;
+                    this.clientHeight = document.body.clientHeight;
+                    const imgContainer = document.querySelector('.img-container');
+                    const mulContainer = document.querySelector('#multiple');
+
+                    this.zooming(imgContainer);
+                    this.zooming(mulContainer);
+                    this.swiper();
+                },
+                zooming(container) {
+                    container.onclick = () => {
+                        if(container.classList.contains('enlarged')) {
+                            container.classList.remove('enlarged');
+                            this.body.style.height = this.clientHeight + 'px';
+                            this.body.style.overflow = 'auto';
+                        }else {
+                            container.classList.add('enlarged');
+                            this.body.style.height = this.screenHeight + 'px';
+                            this.body.style.overflow = 'hidden'
+                        }
                     }
+                },
+                swiper() {
+                    var mySwiper = new Swiper ('.swiper-container', {
+                        loop: true, // 循环模式选项
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev',
+                        }
+                    })    
                 }
             }
-        }
+            App.init();
+        })();
     </script>
 </body>
 </html>
